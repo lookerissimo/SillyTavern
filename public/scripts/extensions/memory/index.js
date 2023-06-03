@@ -290,6 +290,10 @@ async function summarizeChat(context) {
                 return;
             }
 
+            if (extension_settings.memory.memoryAppend){
+                summary = $('#memory_contents').val() +'\n'+ summary;
+            }
+
             setMemoryContext(summary, true);
         }
     }
@@ -326,9 +330,6 @@ function onMemoryContentInput() {
 function setMemoryContext(value, saveToMessage) {
     const context = getContext();
 
-    if (extension_settings.memory.memoryAppend){
-        value = $('#memory_contents').val() +'\n\n'+ value;
-    }
 
     context.setExtensionPrompt(MODULE_NAME, formatMemoryValue(value), extension_prompt_types.AFTER_SCENARIO);
     $('#memory_contents').val(value);
