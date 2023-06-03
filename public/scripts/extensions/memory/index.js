@@ -38,6 +38,7 @@ const defaultSettings = {
     maxLengthPenalty: 4,
     lengthPenaltyStep: 0.1,
     memoryFrozen: false,
+    memoryAppend: false,
 };
 
 function loadSettings() {
@@ -51,6 +52,7 @@ function loadSettings() {
     $('#memory_temperature').val(extension_settings.memory.temperature).trigger('input');
     $('#memory_length_penalty').val(extension_settings.memory.lengthPenalty).trigger('input');
     $('#memory_frozen').prop('checked', extension_settings.memory.memoryFrozen).trigger('input');
+    $('#memory_append').prop('checked', extension_settings.memory.memoryAppend).trigger('input');
 }
 
 function onMemoryShortInput() {
@@ -101,6 +103,12 @@ function onMemoryLengthPenaltyInput() {
 function onMemoryFrozenInput() {
     const value = Boolean($(this).prop('checked'));
     extension_settings.memory.memoryFrozen = value;
+    saveSettingsDebounced();
+}
+
+function onMemoryAppendInput() {
+    const value = Boolean($(this).prop('checked'));
+    extension_settings.memory.memoryAppend = value;
     saveSettingsDebounced();
 }
 
@@ -317,6 +325,11 @@ function onMemoryContentInput() {
 
 function setMemoryContext(value, saveToMessage) {
     const context = getContext();
+
+    if (extension_settings.memory.memoryAppend){
+        value = $('#memory_contents').val() +'\n\n'+ value;
+    }
+
     context.setExtensionPrompt(MODULE_NAME, formatMemoryValue(value), extension_prompt_types.AFTER_SCENARIO);
     $('#memory_contents').val(value);
 
@@ -367,6 +380,7 @@ $(document).ready(function () {
                     <input id="memory_repetition_penalty" type="range" value="${defaultSettings.repetitionPenalty}" min="${defaultSettings.minRepetitionPenalty}" max="${defaultSettings.maxRepetitionPenalty}" step="${defaultSettings.repetitionPenaltyStep}" />
                     <label for="memory_length_penalty">Length penalty <small>[higher = longer summaries]</small> (<span id="memory_length_penalty_value"></span>)</label>
                     <input id="memory_length_penalty" type="range" value="${defaultSettings.lengthPenalty}" min="${defaultSettings.minLengthPenalty}" max="${defaultSettings.maxLengthPenalty}" step="${defaultSettings.lengthPenaltyStep}" />
+                    <label for="memory_append"><input id="memory_append" type="checkbox" /> Append memory</label>
                 </div>
             </div>
         </div>
@@ -380,6 +394,7 @@ $(document).ready(function () {
         $('#memory_temperature').on('input', onMemoryTemperatureInput);
         $('#memory_length_penalty').on('input', onMemoryLengthPenaltyInput);
         $('#memory_frozen').on('input', onMemoryFrozenInput);
+        $('#memory_append').on('input', onMemoryAppendInput);
     }
 
     addExtensionControls();
