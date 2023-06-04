@@ -293,10 +293,12 @@ async function summarizeChat(context) {
             }
 
             if (extension_settings.memory.memoryAppend){
-                summary = $('#memory_contents').val() +'\n\n'+ summary;
+                setMemoryContext($('#memory_contents').val() +'\n'+ summary, true);//todo terrible pactice. rework.
+            }else{
+                setMemoryContext(summary, true);
             }
 
-            setMemoryContext(summary, true);
+            
         }
     }
     catch (error) {
