@@ -1269,6 +1269,12 @@ function addOneMessage(mes, { type = "normal", insertAfter = null, scroll = true
         $(this).parent().html(`<div class="missing-avatar fa-solid fa-user-slash"></div>`);
     });
 
+    if(mes?.extra?.pinned){
+        let pinElm = newMessage.find('.mes_pin');
+        pinElm.removeClass("mes_pin");
+        pinElm.addClass("mes_pin greenOverlayGlow");
+    }
+
     if (type === 'swipe') {
         $("#chat").find(`[mesid="${count_view_mes - 1}"]`).find('.mes_text').html('');
         $("#chat").find(`[mesid="${count_view_mes - 1}"]`).find('.mes_text').append(messageText);
@@ -6325,6 +6331,8 @@ $(document).ready(function () {
             $(this).removeClass("mes_pin");
             $(this).addClass("mes_pin greenOverlayGlow");
         }
+
+        saveChatConditional();
     
     })
 
