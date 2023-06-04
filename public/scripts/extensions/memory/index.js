@@ -39,6 +39,7 @@ const defaultSettings = {
     lengthPenaltyStep: 0.1,
     memoryFrozen: false,
     memoryAppend: false,
+    staticMemory: "",
 };
 
 function loadSettings() {
@@ -53,6 +54,7 @@ function loadSettings() {
     $('#memory_length_penalty').val(extension_settings.memory.lengthPenalty).trigger('input');
     $('#memory_frozen').prop('checked', extension_settings.memory.memoryFrozen).trigger('input');
     $('#memory_append').prop('checked', extension_settings.memory.memoryAppend).trigger('input');
+    $('#memory_static_contents').val(extension_settings.memory.staticMemory).trigger('input');
 }
 
 function onMemoryShortInput() {
@@ -291,7 +293,7 @@ async function summarizeChat(context) {
             }
 
             if (extension_settings.memory.memoryAppend){
-                summary = $('#memory_contents').val() +'\n'+ summary;
+                summary = $('#memory_contents').val() +'\n\n'+ summary;
             }
 
             setMemoryContext(summary, true);
@@ -329,8 +331,10 @@ function onMemoryContentInput() {
 
 function onMemoryStaticContentInput() {
     const value = $(this).val();
+    extension_settings.memory.staticMemory = value;
     const context = getContext();
     context.setExtensionPrompt(MODULE_NAME, formatMemoryValue($('#memory_static_contents').val()+"\n"+value), extension_prompt_types.AFTER_SCENARIO);//todo bad practice, refactoring needed (1. separate variable for united context and absence check, 2. avoid code duplicatoin)
+    saveSettingsDebounced();
 }
 
 function setMemoryContext(value, saveToMessage) {
@@ -363,7 +367,7 @@ $(document).ready(function () {
                 <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
             </div>
             <div class="inline-drawer-content">
-                label for="memory_static_contents">Memory contents</label>
+                <label for="memory_static_contents">Memory contents</label>
                 <textarea id="memory_static_contents" class="text_pole" rows="8" placeholder="Static context can be added there. It is not considered during summarisation but added as usual context into prompt"></textarea>
                 <label for="memory_contents">Memory contents</label>
                 <textarea id="memory_contents" class="text_pole" rows="8" placeholder="Context will be generated here..."></textarea>
