@@ -1928,6 +1928,7 @@ async function Generate(type, { automatic_trigger, force_name2, resolve, reject,
         //////////////////////////////////
 
         let chat2 = [];
+        let pinnedMessages = [];
         for (let i = coreChat.length - 1, j = 0; i >= 0; i--, j++) {
             // For OpenAI it's only used in WI
             if (main_api == 'openai' && !world_info) {
@@ -1936,6 +1937,9 @@ async function Generate(type, { automatic_trigger, force_name2, resolve, reject,
             }
 
             chat2[i] = formatMessageHistoryItem(coreChat[j], isInstruct);
+            if(coreChat[j]?.extra?.pinned){
+                pinnedMessages[i]= chat2[i];
+            }
         }
 
         // Determine token limit
@@ -1993,23 +1997,42 @@ async function Generate(type, { automatic_trigger, force_name2, resolve, reject,
             pinExmString = examplesString = mesExamplesArray.join('');
         }
 
-        // Collect enough messages to fill the context
+
+
+        function pinnedMessagesString() {
+            let result = '';
+            for (let item in pinnedMessages){
+                if (item) result = result + item;
+            }
+            return result;
+        }
+
+        // Collect enough messages to fill the context 
         let arrMes = [];
-        for (let item of chat2) {
+        for (let i=0; i<chat2.length-1; i++) {
+            let item = chat2[i];
             // not needed for OAI prompting
             if (main_api == 'openai') {
                 break;
             }
-
-            chatString = item + chatString;
+            
+            if(pinnedMessages[i]) pinnedMessages[i]=''; //todo rework
+            let currentChatString = item + chatString;
+            chatString = item + chatString + pinnedMessagesString();
             if (canFitMessages()) {
                 arrMes[arrMes.length] = item;
             } else {
                 break;
             }
+            chatString = currentChatString
 
             // Prevent UI thread lock on tokenization
             await delay(1);
+        }
+        for(let pinnedIndex in pinnedMessages){
+            if(pinnedIndex){
+                arrMes[arrMes.length]=pinnedMessages[pinnedIndex];
+            }
         }
 
         if (main_api !== 'openai') {
@@ -6281,6 +6304,28 @@ $(document).ready(function () {
         $("#rawPromptWrapper").text(rawPromptValues);
         rawPromptPopper.update();
         $('#rawPromptPopup').toggle();
+    })
+
+
+    //**********Message pin ********
+    $(document).on("click", ".mes_pin", async function () {
+        const messageId = $(this).closest('.mes').attr('mesid');
+        const message = chat[messageId];
+
+        if (!message.extra) {//absent for first message
+            message.extra = {};
+        }
+
+        if (message.extra?.pinned) {
+            message.extra.pinned = false;
+            $(this).removeClass("mes_pin greenOverlayGlow");
+            $(this).addClass("mes_pin");
+        } else {
+            message.extra.pinned = true;
+            $(this).removeClass("mes_pin");
+            $(this).addClass("mes_pin greenOverlayGlow");
+        }
+    
     })
 
 

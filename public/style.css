@@ -3654,6 +3654,12 @@ label[for="extensions_autoconnect"] {
     text-shadow: none !important;
 }
 
+.greenOverlayGlow {
+    color: #080;
+    opacity: 0.8 !important;
+    text-shadow: none !important;
+}
+
 .inline-drawer-header {
     display: flex;
     justify-content: space-between;
