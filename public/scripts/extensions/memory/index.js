@@ -369,7 +369,7 @@ $(document).ready(function () {
                 <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
             </div>
             <div class="inline-drawer-content">
-                <label for="memory_static_contents">Memory contents</label>
+                <label for="memory_static_contents">Static memory</label>
                 <textarea id="memory_static_contents" class="text_pole" rows="8" placeholder="Static context can be added there. It is not considered during summarisation but added as usual context into prompt"></textarea>
                 <label for="memory_contents">Memory contents</label>
                 <textarea id="memory_contents" class="text_pole" rows="8" placeholder="Context will be generated here..."></textarea>
