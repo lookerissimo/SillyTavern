@@ -327,11 +327,17 @@ function onMemoryContentInput() {
     setMemoryContext(value, true);
 }
 
+function onMemoryStaticContentInput() {
+    const value = $(this).val();
+    const context = getContext();
+    context.setExtensionPrompt(MODULE_NAME, formatMemoryValue($('#memory_static_contents').val()+"\n"+value), extension_prompt_types.AFTER_SCENARIO);//todo bad practice, refactoring needed (1. separate variable for united context and absence check, 2. avoid code duplicatoin)
+}
+
 function setMemoryContext(value, saveToMessage) {
     const context = getContext();
 
 
-    context.setExtensionPrompt(MODULE_NAME, formatMemoryValue(value), extension_prompt_types.AFTER_SCENARIO);
+    context.setExtensionPrompt(MODULE_NAME, formatMemoryValue($('#memory_static_contents').val()+"\n"+value), extension_prompt_types.AFTER_SCENARIO);
     $('#memory_contents').val(value);
 
     if (saveToMessage && context.chat.length) {
@@ -357,6 +363,8 @@ $(document).ready(function () {
                 <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
             </div>
             <div class="inline-drawer-content">
+                label for="memory_static_contents">Memory contents</label>
+                <textarea id="memory_static_contents" class="text_pole" rows="8" placeholder="Static context can be added there. It is not considered during summarisation but added as usual context into prompt"></textarea>
                 <label for="memory_contents">Memory contents</label>
                 <textarea id="memory_contents" class="text_pole" rows="8" placeholder="Context will be generated here..."></textarea>
                 <div class="memory_contents_controls">
@@ -388,6 +396,7 @@ $(document).ready(function () {
         `;
         $('#extensions_settings').append(settingsHtml);
         $('#memory_restore').on('click', onMemoryRestoreClick);
+        $('#memory_static_contents').on('input', onMemoryStaticContentInput);
         $('#memory_contents').on('input', onMemoryContentInput);
         $('#memory_long_length').on('input', onMemoryLongInput);
         $('#memory_short_length').on('input', onMemoryShortInput);
