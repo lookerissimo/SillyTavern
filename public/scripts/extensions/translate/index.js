@@ -372,6 +372,7 @@ jQuery(() => {
     });
     $(document).on('click', '.mes_translate', onMessageTranslateClick);
 
+
     loadSettings();
 
     eventSource.on(event_types.MESSAGE_RECEIVED, handleIncomingMessage);
