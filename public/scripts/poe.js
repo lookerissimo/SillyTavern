@@ -27,7 +27,7 @@ export {
     setPoeOnlineStatus,
 };
 
-const POE_TOKEN_LENGTH = 2048;
+const POE_TOKEN_LENGTH = 4096;
 const CHUNKED_PROMPT_LENGTH = POE_TOKEN_LENGTH * 3.35;
 const MAX_RETRIES_FOR_ACTIVATION = 5;
 const DEFAULT_JAILBREAK_RESPONSE = 'Understood.';
